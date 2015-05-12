@@ -1,0 +1,74 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>net.qyjohn.dewe.v2</groupId>
+  <artifactId>DEWE.v2</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>DEWE.v2</name>
+  <url>http://maven.apache.org</url>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>5.1.35</version>
+    </dependency>
+    <dependency>
+      <groupId>dom4j</groupId>
+      <artifactId>dom4j</artifactId>
+      <version>1.6.1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.rabbitmq</groupId>
+      <artifactId>amqp-client</artifactId>
+      <version>3.5.1</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>DEWE.v2</finalName>
+
+    <plugins>
+      <!-- Make this jar executable -->
+      <plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-jar-plugin</artifactId>
+	<configuration>
+	   <archive>
+	     <manifest>
+		<mainClass>net.qyjohn.dewe.v2.App</mainClass>
+	     </manifest>
+	   </archive>
+	</configuration>
+      </plugin>
+      <!-- Includes the runtime dependencies -->
+      <plugin>
+        <groupId>org.dstovall</groupId>
+        <artifactId>onejar-maven-plugin</artifactId>
+        <version>1.4.4</version>
+        <executions>
+          <execution>
+          <goals>
+          <goal>one-jar</goal>
+          </goals>
+        </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <!-- One-Jar is in the googlecode repository -->
+  <pluginRepositories>
+	<pluginRepository>
+		<id>onejar-maven-plugin.googlecode.com</id>
+		<url>http://onejar-maven-plugin.googlecode.com/svn/mavenrepo</url>
+	</pluginRepository>
+  </pluginRepositories>
+
+</project>

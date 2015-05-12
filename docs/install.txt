@@ -1,0 +1,90 @@
+DEWE.v2 Installation Guide
+
+
+(1) All Nodes
+
+$ sudo apt-get update
+$ sudo apt-get install openjdk-7-jdk sysstat mdadm nfs-commom
+
+
+(2) Master Node Only
+
+Add the following line to /etc/apt/sources.list
+
+deb http://www.rabbitmq.com/debian/ testing main
+
+$wget http://www.rabbitmq.com/rabbitmq-signing-key-public.asc
+$sudo apt-key add rabbitmq-signing-key-public.asc
+$ sudo apt-get update
+sudo apt-get install mysql-server nfs-kernel-server rabbitmq-server 
+
+
+(3) On the master node, create a database in MySQL
+
+$ mysql -u root -p
+mysql> CREATE DATABASE workflow;
+mysql> quit
+$ mysql -u root -p workflow < dewe.sql
+
+
+(4) Update config.properties in the bin folder
+
+Make sure that you have the correct IP address for the master node, as well as the database credentials.
+
+
+(5) Compile the project
+
+mvn clean
+mvn compile
+mvn package
+
+(6) Setting up shared file system between all nodes
+
+The simplest way might be using one dedicated storage server with a large storage device, then use NFS to export a shared folder to all nodes. All nodes mount the same shard folder to the same mounting point such as /data.
+
+Amazon EFS (http://aws.amazon.com/cn/efs/) might also be a good choice.
+
+Also, you can experiment with various POSIX-compliant distributed file systrems. MosseFS is a good example.
+
+
+(7) Start / Stop the daemons
+
+The following commands starts the master daemon (on the master node only), the worker daemon (you need to run this on all worker nodes), and the monitoring daemon (you need to run this on all worker nodes)
+
+$ cd bin
+$ ./dewe.sh master start
+$ ./dewe.sh worker start
+$ ./dewe.sh monitor xvdb start
+
+When a daemon is started, a log file is created to log the output from the daemon (for example, master.log), a pid file is created to log the process ID (for example, master.pid). If you fail to start a particular daemon, delete the corresponding pid file and try again.
+
+If you need to stop the daemons, you can do
+
+$ ./dewe.sh master stop
+$ ./dewe.sh worker stop
+$ ./dewe.sh monitor stop
+
+
+(8) Submit a test project
+
+(Assuming that /data is your shared folder across all worker nodes.)
+
+$ cd /data
+$ wget http://cloud.qyjohn.net/6.0_Montage_for_DEWE.v2.tar.gz
+$ tar zxvf 6.0_Montage_for_DEWE.v2.tar.gz
+$ cd [DEWE.v2/bin]
+$ ./dewe.sh submit Test-Montage /data/6.0_montage_for_DEWE.v2
+
+Now you can run "top" command on the worker nodes to observe the execution of the workflow. In the MySQL database, the status of the workflow will be updated to be "completed" when it is done.
+
+
+(9) Monitoring log
+
+When you run the load monitoring daemon, each line in the log represents the following:
+
+- unix timestamp
+- number of concurrent threads
+- CPU utilizatioin
+- disk TPS
+- disk writes (KB/s)
+- disk reads  (KB/s)
