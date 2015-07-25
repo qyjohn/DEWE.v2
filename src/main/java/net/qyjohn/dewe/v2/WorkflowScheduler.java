@@ -23,36 +23,60 @@ public class WorkflowScheduler
 		timeout = t;
 		
 		completed  = false;
-		initialSet = new HashSet<String>();
-		pendingSet = new HashSet<String>();
-		runningSet = new HashSet<String>();
+		initialSet = new HashSet<String>();	// dependency not met
+		pendingSet = new HashSet<String>();	// dependency met, waiting for execution
+		runningSet = new HashSet<String>();	// running
 		
 		wf = new Workflow(path, timeout);
-/*		for (WorkflowJob job : wf.initialJobs.values()) 
-		{
-			// Register the job to the database
-			database.add_job(uuid, job.jobId, job.jobName);
-		}		
-*/
 	}
 	
+	public synchronized void addRecord(String set, String jobId)
+	{
+		if (set.equals("initial"))
+		{
+			initialSet.add(jobId);
+		}
+		else if (set.equals("pending"))
+		{
+			pendingSet.add(jobId);			
+		}
+		else if (set.equals("running"))
+		{
+			runningSet.add(jobId);			
+		}		
+	}
+	
+	public synchronized void delRecord(String set, String jobId)
+	{
+		if (set.equals("initial"))
+		{
+			initialSet.remove(jobId);
+		}
+		else if (set.equals("pending"))
+		{
+			pendingSet.remove(jobId);			
+		}
+		else if (set.equals("running"))
+		{
+			runningSet.remove(jobId);			
+		}		
+	}
 	
 	public void initialDispatch()
 	{
-		HashSet<String> queueSet = new HashSet<String>();
-		LinkedList<String>	pendingPush = new LinkedList<String>();
-
 		for (WorkflowJob job : wf.initialJobs.values())	
 		{
 			if (job.ready)
 			{
-				pendingSet.add(job.jobId);
+//				pendingSet.add(job.jobId);
+				addRecord("pending", job.jobId);
 				jobInfo = createJobInfo(job.jobId, job.jobCommand);
 				mq.pushMQ(jobInfo);
 			}
 			else
 			{
-				initialSet.add(job.jobId);
+//				initialSet.add(job.jobId);
+				addRecord("initial", job.jobId);
 			}
 		}	
 	}
@@ -72,8 +96,10 @@ public class WorkflowScheduler
 			WorkflowJob job = wf.initialJobs.get(id);
 			jobInfo = createJobInfo(job.jobId, job.jobCommand);
 			mq.pushMQ(jobInfo);	
-			initialSet.remove(id);
-			pendingSet.add(id);
+//			initialSet.remove(id);
+//			pendingSet.add(id);
+			delRecord("initial", id);
+			addRecord("pending", id);
 		}		
 	}
 	
@@ -94,8 +120,10 @@ public class WorkflowScheduler
 			WorkflowJob job = wf.initialJobs.get(id);
 			job.start_time = current;
 
-			pendingSet.remove(id);
-			runningSet.add(id);
+//			pendingSet.remove(id);
+//			runningSet.add(id);
+			delRecord("pending", id);
+			addRecord("running", id);
 //			database.update_job_running(uuid, id, worker);
 		}		
 	}
@@ -116,7 +144,8 @@ public class WorkflowScheduler
 	{		
 		if (runningSet.contains(id))
 		{
-			runningSet.remove(id);
+//			runningSet.remove(id);
+			delRecord("running", id);
 //			database.update_job_completed(uuid, id);
 			
 			WorkflowJob job = wf.initialJobs.get(id);
@@ -172,8 +201,10 @@ public class WorkflowScheduler
 	{
 		if (runningSet.contains(id))
 		{
-			runningSet.remove(id);
-			pendingSet.add(id);
+//			runningSet.remove(id);
+//			pendingSet.add(id);
+			delRecord("running", id);
+			addRecord("pending", id);
 			
 			WorkflowJob job = wf.initialJobs.get(id);
 			jobInfo = createJobInfo(job.jobId, job.jobCommand);

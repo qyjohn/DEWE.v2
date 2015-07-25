@@ -1,14 +1,14 @@
 package net.qyjohn.dewe.v2;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.HashSet;
 
 public class WorkflowTimeoutChecking extends Thread
 {
-	HashMap<String, WorkflowScheduler> allWorkflows;
+	ConcurrentHashMap<String, WorkflowScheduler> allWorkflows;
 	int timeout;
 	
-	public WorkflowTimeoutChecking(HashMap<String, WorkflowScheduler> wf, int t)
+	public WorkflowTimeoutChecking(ConcurrentHashMap<String, WorkflowScheduler> wf, int t)
 	{
 		allWorkflows = wf;
 		timeout = t;

@@ -20,13 +20,13 @@
 
 package net.qyjohn.dewe.v2;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import org.dom4j.*;
  
 public class AckMQ extends Thread
 {
 	PullMQ amq;
-	HashMap<String, WorkflowScheduler> allWorkflows;
+	ConcurrentHashMap<String, WorkflowScheduler> allWorkflows;
 	
 	/**
 	 *
@@ -39,7 +39,7 @@ public class AckMQ extends Thread
 	 *
 	 */
 	 
-	public AckMQ(HashMap<String, WorkflowScheduler> wf)
+	public AckMQ(ConcurrentHashMap<String, WorkflowScheduler> wf)
 	{
 		allWorkflows = wf;
 		amq = new PullMQ("localhost", FoxParam.SIMPLE_WORKFLOW_ACK_MQ);
@@ -66,6 +66,7 @@ public class AckMQ extends Thread
 			{
 				// Receive ACK message 
 				ackString = amq.pullMQ();
+				System.out.println(ackString);
 				ack = DocumentHelper.parseText(ackString).getRootElement();
 				project = ack.attribute("project").getValue();
 				jobId   = ack.attribute("id").getValue();

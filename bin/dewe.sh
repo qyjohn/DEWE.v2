@@ -72,3 +72,14 @@ fi
 if [ $1 == "submit" ]; then
 	java -jar ../target/DEWE.v2.one-jar.jar submit $2 $3
 fi
+
+#
+# This part checks the status of submitted workflows
+#
+# Example:
+# ./dewe.sh status
+#
+
+if [ $1 == "status" ]; then
+	mysql -u root -proot -e "SELECT * FROM workflow" workflow
+fi

@@ -2,7 +2,7 @@ package net.qyjohn.dewe.v2;
 
 import java.io.*;
 import java.net.*;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Iterator;
@@ -17,9 +17,9 @@ import org.dom4j.io.SAXReader;
 public class Workflow
 {
 
-	HashMap<String, WorkflowJob> initialJobs, queueJobs, runningJobs;
+	ConcurrentHashMap<String, WorkflowJob> initialJobs, queueJobs, runningJobs;
 //	completeJobs;
-	HashMap<String, Integer> timeoutMap;
+	ConcurrentHashMap<String, Integer> timeoutMap;
 	String projectDir;
 	int timeout;
 	
@@ -42,14 +42,14 @@ public class Workflow
 		try
 		{
 			// Initialize the HashMap for workflow jobs
-			initialJobs = new HashMap<String, WorkflowJob>();
-			queueJobs = new HashMap<String, WorkflowJob>();
-			runningJobs = new HashMap<String, WorkflowJob>();
+			initialJobs = new ConcurrentHashMap<String, WorkflowJob>();
+			queueJobs = new ConcurrentHashMap<String, WorkflowJob>();
+			runningJobs = new ConcurrentHashMap<String, WorkflowJob>();
 //			completeJobs = new HashMap<String, WorkflowJob>();
 
 			projectDir = dir;
 			
-			timeoutMap = new HashMap<String, Integer>();
+			timeoutMap = new ConcurrentHashMap<String, Integer>();
 			String timeoutFile = projectDir + "/timeout.xml";	// timeout definition for jobs
 			File f = new File(timeoutFile);
 			if (f.exists())

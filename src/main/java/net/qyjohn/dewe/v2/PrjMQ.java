@@ -1,6 +1,6 @@
 package net.qyjohn.dewe.v2;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import org.dom4j.*;
 import java.util.UUID;
 
@@ -10,7 +10,7 @@ public class PrjMQ extends Thread
 	PushMQ jmq;		// Job MQ
 	FoxDB database;	// Workflow database
 	int timeout;	// Job timeout setting
-	HashMap<String, WorkflowScheduler> allWorkflows;
+	ConcurrentHashMap<String, WorkflowScheduler> allWorkflows;
 	
 	/**
 	 *
@@ -23,7 +23,7 @@ public class PrjMQ extends Thread
 	 *
 	 */
 	 
-	public PrjMQ(HashMap<String, WorkflowScheduler> wf, FoxDB db, PushMQ mq, int t)
+	public PrjMQ(ConcurrentHashMap<String, WorkflowScheduler> wf, FoxDB db, PushMQ mq, int t)
 	{
 		allWorkflows = wf;
 		database = db;
@@ -33,7 +33,7 @@ public class PrjMQ extends Thread
 	}
 
 	
-	public synchronized void addWorkflow(String uuid, WorkflowScheduler scheduler)
+	public void addWorkflow(String uuid, WorkflowScheduler scheduler)
 	{
 		allWorkflows.put(uuid, scheduler);		
 	}
@@ -62,10 +62,9 @@ public class PrjMQ extends Thread
 		    	String uuid = UUID.randomUUID().toString();
 		    	database.add_workflow(uuid, name, path);
 				WorkflowScheduler scheduler = new WorkflowScheduler(database, uuid, jmq, path, timeout);
-				addWorkflow(uuid, scheduler);
+				allWorkflows.put(uuid, scheduler);	
 				database.update_workflow(uuid, "started");
 				scheduler.initialDispatch();
-				
 			} catch (Exception e)
 			{
 				System.out.println(e.getMessage());

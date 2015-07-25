@@ -62,7 +62,7 @@ public class FoxWorker extends Thread
 			String command = job.element("command").getText().trim();
 	
 			// Add the current running task to local runningJobs HashSet
-			addJob(jobId);
+			addJob(project+jobId);
 //			runningJobs.add(jobId);
 			// Start a new thread to run the task
 			new WorkerThread(amq, worker, runningJobs, max_cpu, job).start();	

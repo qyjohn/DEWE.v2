@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.UUID;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FoxServer extends Thread
 {
@@ -28,7 +29,9 @@ public class FoxServer extends Thread
 			String db_database = prop.getProperty("db_database");
 			
 			// Create a HashMap to hold all the workflow schedulers, each workflow scheduler handles one workflow
-			HashMap<String, WorkflowScheduler> allWorkflows = new HashMap<String, WorkflowScheduler>();
+			ConcurrentHashMap<String, WorkflowScheduler> allWorkflows = new ConcurrentHashMap<String, WorkflowScheduler>();
+			
+//			HashMap<String, WorkflowScheduler> allWorkflows = new HashMap<String, WorkflowScheduler>();
 			
 			// Create an AckMQ
 			// The HashMap for all workflow schedulers is needed, because the AckMQ needs to pass the messages received

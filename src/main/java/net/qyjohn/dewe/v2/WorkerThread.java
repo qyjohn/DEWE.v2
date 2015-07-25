@@ -26,6 +26,7 @@ public class WorkerThread extends Thread
 		jobId = job.attribute("id").getValue();
 		jobCommand = job.element("command").getText().trim();
 		fullCommand = projectPath + "/bin/" + jobCommand;
+		System.out.println(fullCommand);
 		workDir = projectPath + "/workdir";
 	}
 	
@@ -61,7 +62,7 @@ public class WorkerThread extends Thread
 			in.close();
 
 			p.waitFor();
-			removeJob(jobId);
+			removeJob(project+jobId);
 //			runningJobs.remove(jobId);
 			p=null;
 		} catch (Exception e)
