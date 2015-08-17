@@ -209,7 +209,9 @@ public class WorkflowScheduler
 			WorkflowJob job = wf.initialJobs.get(id);
 			jobInfo = createJobInfo(job.jobId, job.jobCommand);
 			mq.pushMQ(jobInfo);						
-			System.out.println(uuid + ":\t" + id + " is now re-submit for execution.");
+			long   unixTime;
+			unixTime = System.currentTimeMillis() / 1000L;
+			System.out.println(unixTime + "\t" + uuid + ":\t" + id + " is now re-submit for execution.");
 		}		
 	}
 	

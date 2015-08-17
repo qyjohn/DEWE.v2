@@ -59,6 +59,7 @@ public class AckMQ extends Thread
 		String ackString;
 		String project, jobId, status, worker;
 		Element ack;
+		long   unixTime;
 		
 		while (true)
 		{
@@ -66,7 +67,8 @@ public class AckMQ extends Thread
 			{
 				// Receive ACK message 
 				ackString = amq.pullMQ();
-				System.out.println(ackString);
+				unixTime = System.currentTimeMillis() / 1000L;
+				System.out.println(unixTime + "\t" + ackString);
 				ack = DocumentHelper.parseText(ackString).getRootElement();
 				project = ack.attribute("project").getValue();
 				jobId   = ack.attribute("id").getValue();
