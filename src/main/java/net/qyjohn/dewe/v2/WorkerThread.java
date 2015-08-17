@@ -26,7 +26,11 @@ public class WorkerThread extends Thread
 		jobId = job.attribute("id").getValue();
 		jobCommand = job.element("command").getText().trim();
 		fullCommand = projectPath + "/bin/" + jobCommand;
-		System.out.println(fullCommand);
+
+		long   unixTime;
+		unixTime = System.currentTimeMillis() / 1000L;
+		System.out.println(unixTime + "\t" + fullCommand);
+		
 		workDir = projectPath + "/workdir";
 	}
 	
