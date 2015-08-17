@@ -88,5 +88,6 @@ fi
 #
 
 if [ $1 == "status" ]; then
-	mysql -u root -proot -e "SELECT * FROM workflow" workflow
+	dbhost=`grep master= config.properties | awk -F'=' '{print $2}'`
+	mysql -h $dbhost -u root -proot -e "SELECT * FROM workflow" workflow
 fi
