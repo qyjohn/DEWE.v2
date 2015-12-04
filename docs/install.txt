@@ -4,7 +4,7 @@ DEWE.v2 Installation Guide
 (1) All Nodes
 
 $ sudo apt-get update
-$ sudo apt-get install openjdk-7-jdk sysstat mdadm nfs-commom
+$ sudo apt-get install openjdk-7-jdk sysstat mdadm nfs-common maven2
 
 
 (2) Master Node Only
